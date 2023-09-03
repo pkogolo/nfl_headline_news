@@ -2,7 +2,7 @@ from flask import Flask
 import requests
 from bs4 import BeautifulSoup
 import json
-
+#flask is not cooperating with me tonight
 app = Flask(__name__)
 
 @app.route('/')
