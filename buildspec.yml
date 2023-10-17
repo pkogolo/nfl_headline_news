@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging into Amazon ECR ...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 023908423901.dkr.ecr.us-east-1.amazonaws.com
+      - REPOSITORY_URI=023908423901.dkr.ecr.us-east-1.amazonaws.com/nflhlnews-ecr
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      
+
+  build:
+    commands:
+      - echo Building the docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo build completed on date
+      - echo pushing to the repo
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo writing the image definitions file ...
+      - printf '[{"name":"nflhlnews-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+  files:
+    - imagedefinitions.json

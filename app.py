@@ -2,10 +2,14 @@ from flask import Flask
 import requests
 from bs4 import BeautifulSoup
 import json
+from flask_cors import CORS, cross_origin
+
 #flask is not cooperating with me tonight
 app = Flask(__name__)
+CORS(app, support_credentials=True)
 
 @app.route('/')
+@cross_origin(supports_credentials=True)
 def nfl_news():
     nfl_url = "https://www.nfl.com/news/"
     nfl_response = requests.get(nfl_url)
