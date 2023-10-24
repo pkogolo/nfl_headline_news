@@ -16,12 +16,22 @@ def nfl_news():
     nfl_response = requests.get(nfl_url)
     nfl_soup = BeautifulSoup(nfl_response.content, "html.parser")
     nfl_news_titles = nfl_soup.find_all("h3", class_ ="d3-o-media-object__title")
+    nfl_news_details = nfl_soup.find_all("div", class_ = "d3-o-media-object")
+    
+    
 
-    news_headlines = []
-    for title in nfl_news_titles:
-        title_text = title.text.strip()  
-        news_headlines.append(title_text)
-       
+    news_headlines = []  # an empty list
+    for title, news in zip(nfl_news_titles, nfl_news_details):  # use zip to iterate through two lists simultaneously
+        news_dict = {}  # An empty dictionary
+        title_text = title.text.strip()
+        news_dict["headline"] = title_text  # creating a dictionary key called "headline" with the value title_text
+        links = news.find("a")
+        hrefs = links["href"]
+        main_link = "https://www.nfl.com" + hrefs  # fix the URL construction
+        news_dict["link"] = main_link  # Creating a dictionary key called "link" with the value main_link
+        news_headlines.append(news_dict)
+        print(main_link, "\n")  # change to main_link instead of hrefs
+
 
     return json.dumps(news_headlines) 
 
