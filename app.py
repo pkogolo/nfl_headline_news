@@ -26,7 +26,7 @@ def nfl_news():
     return json.dumps(news_headlines) 
 
 
-# if __name__ == "__main__":
-# 	#app.run()
-#     app.run(host='0.0.0.0', port=9000)
+if __name__ == "__main__":
+	#app.run()
+    app.run(host='0.0.0.0', port=9000)
 
